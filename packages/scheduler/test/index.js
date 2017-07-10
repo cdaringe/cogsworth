@@ -41,7 +41,9 @@ tape('add job', function (t) {
   t.plan(3)
   t.throws(function () { sched.addJob() }, 'errors adding bogus job')
   return factory({ randomJobs: 1 })
-  .then(function (sched) { return sched.start() })
+  .then(function (sched) {
+    return sched.start()
+  })
   .then(function (observable) {
     observable.subscribe(function (evt) {
       t.ok(evt, 'scheduler emits ticks')
@@ -118,8 +120,8 @@ tape('stop scheduler', function (t) {
 })
 
 tape('rrule triggers', function (t) {
-  t.plan(1)
-  var aTicks = 10
+  t.plan(3)
+  var aTicks = 2
   var bTicks = 4
   var expectedTicks = aTicks + bTicks
   var jobs = [
@@ -129,7 +131,7 @@ tape('rrule triggers', function (t) {
     },
     {
       id: 'rrule_test_b',
-      trigger: new TriggerRrule({ rrule: 'FREQ=SECONDLY;COUNT=4;INTERVAL=' + bTicks })
+      trigger: new TriggerRrule({ rrule: 'FREQ=SECONDLY;INTERVAL=2;COUNT=' + bTicks })
     }
   ]
   var scheduler
@@ -140,12 +142,19 @@ tape('rrule triggers', function (t) {
   })
   .then(function (observable) {
     var ticks = 0
+    var aEmissions = 0
+    var bEmissions = 0
     observable.subscribe(function (evt) {
       ++ticks
+      if (evt.job.id === jobs[0].id) ++aEmissions
+      else if (evt.job.id === jobs[1].id) ++bEmissions
+      else throw new Error('unable to determine emitted job')
       if (ticks < expectedTicks) return
       setTimeout(function () {
         scheduler.stop()
         t.equal(ticks, expectedTicks, 'rrule ticks per expectation')
+        t.equal(aEmissions, aTicks, 'rrule ticks per expectation on trigger a')
+        t.equal(bEmissions, bTicks, 'rrule ticks per expectation on trigger b')
         t.end()
       }, 50) // allow time for bogus events to attempt to ruin our ticks state!
     })

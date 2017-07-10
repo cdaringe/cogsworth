@@ -9,7 +9,8 @@ function SimpleTrigger (opts) {
     this.observer = observer
   }.bind(this))
 }
-SimpleTrigger.prototype = Trigger.prototype
+SimpleTrigger.prototype = Object.create(Trigger.prototype)
+SimpleTrigger.prototype.constructor = SimpleTrigger
 
 SimpleTrigger.prototype.start = function () {
   setTimeout(function () {

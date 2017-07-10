@@ -51,7 +51,9 @@ Scheduler.prototype.applyToJobs = function (fn) {
 
 Scheduler.prototype.start = function () {
   this.state = 'STARTING'
-  return this.applyToJobs(function startJob (job) { return job.trigger.start() })
+  return this.applyToJobs(function startJob (job) {
+    return job.trigger.start()
+  })
   .then(function () { this.state = 'RUNNING' }.bind(this))
   .then(function () {
     if (this.onTick) return this.triggerObserver.subscribe(this.onTick)

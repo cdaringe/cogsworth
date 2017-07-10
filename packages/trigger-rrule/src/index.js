@@ -12,55 +12,75 @@ function TriggerRrule (opts) {
   this.tickScanDuration = opts.tickScanDuration || 30 * 1000 // @TODO document
   if (!opts || !opts.rrule) throw new Error('rrule required')
   this.rrule = this.initRrule(opts.rrule)
+  this.maxCount = this.rrule.origOptions.count || Infinity
   this.observer = null // set by Observable.create(...)
-  this.stream = Observable.create(function (observer) { this.observer = observer })
+  this.stream = Observable.create(function (observer) { this.observer = observer }.bind(this))
 }
-TriggerRrule.prototype = Trigger.prototype
+TriggerRrule.prototype = Object.create(Trigger.prototype)
+TriggerRrule.prototype.constructor = TriggerRrule
 
 TriggerRrule.prototype.start = function () {
-  this.wakeUp()
-}
-
-TriggerRrule.prototype.getStream = function () {
-  return this.stream
-}
-
-TriggerRrule.prototype.wakeUp = function () {
+  this.count = 0
   this.isRunning = true
   this.wakeUpInvterval = setInterval(function () {
     this.streamTicks()
   }.bind(this), this.queueRefreshInterval)
 }
 
-TriggerRrule.prototype.sleep = function () {
-  this.isRunning = false
-  clearInterval(this.wakeUpInvterval)
+TriggerRrule.prototype.getStream = function () {
+  return this.stream
 }
 
 TriggerRrule.prototype.stop = function () {
+  this.isRunning = false
+  this.count = 0
   this.observer.complete()
+  clearInterval(this.wakeUpInvterval)
 }
 
 TriggerRrule.prototype.initRrule = function (rrule) {
-  if (rrule instanceof RRule) return rrule
-  else if (rrule instanceof 'string') return rrulestr(rrule)
+  if (rrule instanceof RRule) {
+    if (!rrule.origOptions.dtstart) throw new Error('rrule must have dtstart set')
+    return rrule
+  } else if (typeof rrule === 'string') {
+    var tmp = rrulestr(rrule).origOptions
+    tmp.dtstart = new Date(this.startDate)
+    return new RRule(tmp)
+  }
   throw new Error('invalid rrule: ' + rrule)
 }
 
 TriggerRrule.prototype.streamTicks = function () {
-  var now = Date.now()
-  if (this.startDate < now) return
-  var prev = this._prevScanForTicksStamp = this._prevScanForTicksStamp || now
-  var next = prev + this.tickScanDuration
-  this.rrule.getBetween(prev, next)
-  .map(function (timestamp) {
-    if (!this.isRunning) return
-    return setTimeout(
-      function emitTriggerInfo () { this.observer.next({ timestamp: timestamp }) }.bind(this),
-      new Date(timestamp).getTime() - now
-    )
-  }.bind(this))
-  if (Date.now() > next) {
+  var now = new Date()
+
+  if (this.startDate > now) return
+
+  var windowLeadingEdge = this._windowLeadingEdge = this._windowLeadingEdge || this.startDate
+  var windowTrailingEdge = new Date(windowLeadingEdge.getTime() + this.tickScanDuration)
+  var tDate
+  var isWithinWindow
+
+  do {
+    tDate = this.rrule.after(tDate || windowLeadingEdge, !tDate)
+    if (tDate === null) {
+      isWithinWindow = false
+      break
+    }
+    isWithinWindow = tDate.getTime() < windowTrailingEdge.getTime()
+    if (isWithinWindow) {
+      setTimeout(
+        function emitTriggerInfo (date) {
+          if (!this.isRunning) return
+          this.observer.next({ date: date })
+          if (!this.rrule.after(date, !date)) this.stop()
+        }.bind(this, tDate),
+        tDate.getTime() - now.getTime()
+      )
+    }
+  } while (isWithinWindow)
+
+  this._windowLeadingEdge = windowTrailingEdge
+  if (Date.now() > windowTrailingEdge) {
     throw new Error([
       'TriggerRrule overloaded: unable to process all rrule ticks within',
       'duration',

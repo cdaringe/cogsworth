@@ -4,7 +4,7 @@
   "description": "easy & capable job scheduling for node & the browser",
   "main": "index.js",
   "scripts": {
-    "precommit": "standard"
+    "precommit": "standard && lerna exec -- npm test"
   },
   "repository": {
     "type": "git",
