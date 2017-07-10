@@ -1,0 +1,45 @@
+{
+  "name": "@cogsworth/scheduler",
+  "version": "0.0.0",
+  "description": "easy & capable job scheduling for node & the browser",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "run-p test:node test:browser",
+    "test:node": "node test/",
+    "test:browser": "browserify test/index.js | tape-run"
+  },
+  "dependencies": {
+    "@cogsworth/job": "^0.0.0",
+    "@cogsworth/storage-memory": "^0.0.0",
+    "rxjs": "^5.4.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/cdaringe/cogsworth.git"
+  },
+  "keywords": [
+    "schdeule",
+    "scheduler",
+    "cron",
+    "rrule",
+    "rfc5545",
+    "rfc2245",
+    "ical",
+    "icalendar",
+    "job"
+  ],
+  "author": "cdaringe",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cdaringe/cogsworth/issues"
+  },
+  "homepage": "https://github.com/cdaringe/cogsworth#readme",
+  "devDependencies": {
+    "browserify": "^14.4.0",
+    "lodash": "^4.17.4",
+    "npm-run-all": "^4.0.2",
+    "run-p": "0.0.0",
+    "tape": "^4.7.0",
+    "tape-run": "^3.0.0"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "@cogsworth/job",
+  "version": "0.0.0",
+  "description": "easy & capable job scheduling for node & the browser",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node test/"
+  },
+  "dependencies": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/cdaringe/cogsworth.git"
+  },
+  "keywords": [
+    "schdeule",
+    "scheduler",
+    "cron",
+    "rrule",
+    "rfc5545",
+    "rfc2245",
+    "ical",
+    "icalendar",
+    "job"
+  ],
+  "author": "cdaringe",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cdaringe/cogsworth/issues"
+  },
+  "homepage": "https://github.com/cdaringe/cogsworth#readme"
+}
