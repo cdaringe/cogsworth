@@ -1,12 +1,10 @@
 {
   "name": "@cogsworth/job",
-  "version": "0.0.0",
+  "version": "0.0.1-0",
   "description": "easy & capable job scheduling for node & the browser",
   "main": "src/index.js",
   "scripts": {
     "test": "echo 'no tests'"
-  },
-  "dependencies": {
   },
   "repository": {
     "type": "git",

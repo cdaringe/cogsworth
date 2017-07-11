@@ -1,13 +1,13 @@
 {
   "name": "@cogsworth/trigger-cron",
-  "version": "0.0.0",
+  "version": "0.0.1-0",
   "description": "easy & capable job scheduling for node & the browser",
   "main": "src/index.js",
   "scripts": {
     "test": "echo 'no tests'"
   },
   "dependencies": {
-    "@cogsworth/trigger": "^0.0.0",
+    "@cogsworth/trigger": "^0.0.1-0",
     "cron-emitter": "*",
     "debug": "^2.6.8",
     "rxjs": "^5.4.2"
