@@ -4,17 +4,27 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
+
     {
       "type": "node",
       "request": "launch",
-      "name": "Test Program",
-      "program": "${workspaceRoot}/test/index.js"
+      "name": "Test Test",
+      "program": "${workspaceRoot}/packages/scheduler/test/index.js",
+      "env": {
+        "DEBUG": "cogsworth:*"
+      }
     },
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch Program",
-      "program": "${file}"
+      "name": "Test File",
+      "program": "${workspaceRoot}/packages/scheduler/node_modules/ava/profile.js",
+      "args": [
+        "${file}"
+      ],
+      "env": {
+        "DEBUG": "cogsworth:*"
+      }
     }
   ]
 }

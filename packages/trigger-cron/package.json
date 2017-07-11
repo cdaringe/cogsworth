@@ -1,5 +1,5 @@
 {
-  "name": "@cogsworth/trigger-rrule",
+  "name": "@cogsworth/trigger-cron",
   "version": "0.0.0",
   "description": "easy & capable job scheduling for node & the browser",
   "main": "src/index.js",
@@ -8,8 +8,8 @@
   },
   "dependencies": {
     "@cogsworth/trigger": "^0.0.0",
+    "cron-emitter": "*",
     "debug": "^2.6.8",
-    "rrule": "*",
     "rxjs": "^5.4.2"
   },
   "repository": {
