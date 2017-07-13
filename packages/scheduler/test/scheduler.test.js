@@ -1,7 +1,7 @@
 'use strict'
 
 var test = require('ava').test
-var Scheduler = require('../src/Scheduler')
+var Scheduler = require('../')
 var factory = require('./helpers/factory')
 var bb = require('bluebird')
 

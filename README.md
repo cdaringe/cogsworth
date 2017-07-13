@@ -20,8 +20,8 @@ for example,
 ## usage
 
 ```js
-var Scheduler = require('@cogsworth/scheduler')
-var TriggerRrule = require('@cogsworth/trigger-rrule') // e.g. iCal
+var Scheduler = require('cogsworth-scheduler')
+var TriggerRrule = require('cogsworth-trigger-rrule') // e.g. iCal
 
 // create a scheduler & a job
 var scheduler = new Scheduler()

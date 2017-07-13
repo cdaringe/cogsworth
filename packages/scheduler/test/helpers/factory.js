@@ -1,7 +1,7 @@
 'use strict'
 
 var times = require('lodash/times')
-var Scheduler = require('../../src/Scheduler')
+var Scheduler = require('../../')
 var SimpleTrigger = require('../../../trigger/src/SimpleTrigger')
 
 module.exports = function schedulerFactory (opts) {

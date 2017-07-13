@@ -1,1 +1,1 @@
-# @cogsworth/scheduler
+# cogsworth-scheduler

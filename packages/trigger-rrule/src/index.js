@@ -1,6 +1,6 @@
 'use strict'
 
-var Trigger = require('@cogsworth/trigger').Trigger
+var Trigger = require('cogsworth-trigger').Trigger
 var rrule = require('rrule')
 var debug = require('debug')('cogsworth:trigger-rrule')
 var RRule = rrule.RRule
@@ -13,6 +13,22 @@ function TriggerRrule (opts) {
 }
 TriggerRrule.prototype = Object.create(Trigger.prototype)
 TriggerRrule.prototype.constructor = TriggerRrule
+
+TriggerRrule.prototype.getNextTriggerEvent = function (date, isFirstRequest) {
+  return this.rrule.after(date, isFirstRequest)
+}
+
+TriggerRrule.prototype.initRrule = function (rrule) {
+  if (rrule instanceof RRule) {
+    if (!rrule.origOptions.dtstart) throw new Error('rrule must have dtstart set')
+    return rrule
+  } else if (typeof rrule === 'string') {
+    var tmp = rrulestr(rrule).origOptions
+    tmp.dtstart = new Date(this.startDate)
+    return new RRule(tmp)
+  }
+  throw new Error('invalid rrule: ' + rrule)
+}
 
 TriggerRrule.prototype.start = function () {
   Trigger.prototype.start.call(this)
@@ -31,20 +47,8 @@ TriggerRrule.prototype.stop = function () {
   this.isRunning = false
 }
 
-TriggerRrule.prototype.initRrule = function (rrule) {
-  if (rrule instanceof RRule) {
-    if (!rrule.origOptions.dtstart) throw new Error('rrule must have dtstart set')
-    return rrule
-  } else if (typeof rrule === 'string') {
-    var tmp = rrulestr(rrule).origOptions
-    tmp.dtstart = new Date(this.startDate)
-    return new RRule(tmp)
-  }
-  throw new Error('invalid rrule: ' + rrule)
-}
-
-TriggerRrule.prototype.getNextTriggerEvent = function (date, isFirstRequest) {
-  return this.rrule.after(date, isFirstRequest)
+TriggerRrule.prototype.toJSON = function () {
+  return { rrule: this.rrule.toString() }
 }
 
 module.exports = TriggerRrule

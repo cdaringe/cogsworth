@@ -1,6 +1,6 @@
 'use strict'
 
-var Trigger = require('@cogsworth/trigger').Trigger
+var Trigger = require('cogsworth-trigger').Trigger
 var CronEmitter = require('cron-emitter')
 var debug = require('debug')('cogsworth:TriggerCron')
 
@@ -40,6 +40,11 @@ TriggerCron.prototype.stop = function () {
   }
   Trigger.prototype.stop.call(this)
 }
+
+TriggerCron.prototype.toJSON = function () {
+  return { cron: this.cron.toString() }
+}
+
 TriggerCron.id = 0
 
 module.exports = TriggerCron

@@ -16,7 +16,11 @@ function Trigger (opts) {
   this.endDate = opts.endDate || null
   this.tickScanDuration = opts.tickScanDuration || 30 * 1000 // @TODO document
   this.stream = Observable.create(function (observer) { this.observer = observer }.bind(this))
-  this._isFirstNextTriggerCheck = true
+  this._includeMomentIfOnIntervalBoundary = true
+}
+
+Trigger.prototype.clearInterval = function () {
+  if (this.wakeUpInvterval) clearInterval(this.wakeUpInvterval)
 }
 
 Trigger.prototype.getStream = function () {
@@ -24,37 +28,55 @@ Trigger.prototype.getStream = function () {
 }
 
 Trigger.prototype.streamBatchedTriggerEvents = function () {
-  var now = new Date()
-
-  if (this.startDate > now) return
+  if (this.startDate > new Date()) return debug('too early to start trigger')
 
   var windowLeadingEdge = this._windowLeadingEdge = this._windowLeadingEdge || this.startDate
   var windowTrailingEdge = new Date(windowLeadingEdge.getTime() + this.tickScanDuration)
-  var tDate = windowLeadingEdge
+  this._windowLeadingEdge = windowTrailingEdge
+  debug('start batching ticks. leading edge: ' + windowLeadingEdge.toISOString())
+  var tickMoment = windowLeadingEdge
   var isWithinWindow
   do {
-    if (this.endDate && tDate && tDate > this.endDate) return this.stop()
-    tDate = this.getNextTriggerEvent(tDate, this._isFirstNextTriggerCheck)
-    this._isFirstNextTriggerCheck = false
-    if (!tDate) {
-      isWithinWindow = false
-      break
+    // assert we haven't exceeded the trigger end date
+    if (this.endDate && tickMoment && tickMoment > this.endDate) {
+      debug('end date reached, stopping')
+      return this.stop()
     }
-    isWithinWindow = tDate.getTime() < windowTrailingEdge.getTime()
+
+    // get next tick date from the last tick date
+    tickMoment = this.getNextTriggerEvent(tickMoment, this._includeMomentIfOnIntervalBoundary)
+    this._includeMomentIfOnIntervalBoundary = false
+
+    // exit if no ticks remain
+    if (!tickMoment) {
+      debug('trigger indicated no more events available, waiting for final tick to complete')
+      this.clearInterval()
+      return
+    }
+
+    // emit tick if it falls within this batch window
+    isWithinWindow = tickMoment.getTime() < windowTrailingEdge.getTime()
     if (isWithinWindow) {
-      var msFromNow = tDate.getTime() - now.getTime()
-      if (msFromNow < 0) msFromNow = 0
+      var msFromNow = tickMoment.getTime() - new Date().getTime()
+      if (msFromNow < 0) {
+        debug('time slip: javascript vm slow, time fast! trigger should have fired in past--launching it now')
+        msFromNow = 0
+      }
       debug('scheduling tick ' + msFromNow + ' msFromNow')
       setTimeout(
         function emitTriggerInfo (date) {
           if (!this.isRunning) return
           this.observer.next({ date: date })
-          if (this.shouldStop(date)) this.stop()
-        }.bind(this, tDate),
+          if (this.shouldStop(date)) {
+            return this.stop()
+          }
+        }.bind(this, tickMoment),
         msFromNow
       )
     }
   } while (isWithinWindow)
+  this._includeMomentIfOnIntervalBoundary = true
+  debug('finish batching ticks. leading edge: ' + windowLeadingEdge.toISOString())
 
   this._windowLeadingEdge = windowTrailingEdge
   if (Date.now() > windowTrailingEdge) {
@@ -79,9 +101,7 @@ Trigger.prototype.start = function () {
 
 Trigger.prototype.stop = function () {
   this.observer.complete()
-  if (this.getNextTriggerEvent) {
-    clearInterval(this.wakeUpInvterval)
-  }
+  this.clearInterval()
 }
 
 module.exports = Trigger

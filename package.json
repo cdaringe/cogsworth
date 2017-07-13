@@ -4,7 +4,10 @@
   "description": "easy & capable job scheduling for node & the browser",
   "main": "index.js",
   "scripts": {
-    "precommit": "standard && lerna exec -- npm test"
+    "lint": "standard",
+    "precommit": "run-p lint test",
+    "publish": "lerna exec -- npm publish",
+    "test": "lerna exec -- npm test"
   },
   "repository": {
     "type": "git",
@@ -30,6 +33,7 @@
   "devDependencies": {
     "husky": "^0.14.3",
     "lerna": "^2.0.0",
+    "npm-run-all": "^4.0.2",
     "standard": "^10.0.2"
   }
 }

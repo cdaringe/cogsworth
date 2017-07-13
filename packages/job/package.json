@@ -1,6 +1,6 @@
 {
-  "name": "@cogsworth/job",
-  "version": "0.0.1-0",
+  "name": "cogsworth-job",
+  "version": "0.0.2",
   "description": "easy & capable job scheduling for node & the browser",
   "main": "src/index.js",
   "scripts": {

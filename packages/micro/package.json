@@ -1,16 +1,17 @@
 {
-  "name": "cogsworth-trigger-cron",
+  "name": "cogsworth-micro",
   "version": "0.0.2",
   "description": "easy & capable job scheduling for node & the browser",
   "main": "src/index.js",
-  "scripts": {
-    "test": "echo 'no tests'"
-  },
+  "scripts": {},
   "dependencies": {
-    "cogsworth-trigger": "^0.0.2",
-    "cron-emitter": "*",
-    "debug": "^2.6.8",
-    "rxjs": "^5.4.2"
+    "cogsworth-scheduler": "^0.0.2",
+    "cogsworth-storage-memory": "^0.0.2",
+    "cogsworth-trigger-cron": "^0.0.2",
+    "cogsworth-trigger-rrule": "^0.0.2",
+    "koa": "^2.3.0",
+    "koa-bodyparser": "^4.2.0",
+    "koa-route": "^3.2.0"
   },
   "repository": {
     "type": "git",
@@ -32,5 +33,12 @@
   "bugs": {
     "url": "https://github.com/cdaringe/cogsworth/issues"
   },
-  "homepage": "https://github.com/cdaringe/cogsworth#readme"
+  "homepage": "https://github.com/cdaringe/cogsworth#readme",
+  "devDependencies": {
+    "ava": "^0.20.0",
+    "bluebird": "^3.5.0",
+    "lodash": "^4.17.4",
+    "npm-run-all": "^4.0.2",
+    "run-p": "0.0.0"
+  }
 }
