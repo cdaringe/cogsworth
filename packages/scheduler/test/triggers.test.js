@@ -1,14 +1,13 @@
 'use strict'
 
-// var tape = require('tape')
-var tape = require('ava').test
+var test = require('ava').test
 var factory = require('./helpers/factory')
 var bb = require('bluebird')
 
 var TriggerRrule = require('../../trigger-rrule/')
 var TriggerCron = require('../../trigger-cron/')
 
-tape('rrule triggers', function (t) {
+test('rrule triggers', function (t) {
   var aTicks = 2
   var bTicks = 4
   var expectedTicks = aTicks + bTicks
@@ -51,7 +50,7 @@ tape('rrule triggers', function (t) {
   })
 })
 
-tape('cron triggers', function (t) {
+test('cron triggers', function (t) {
   var aTicks = 9
   var bTicks = 4
   var cronDuration = 10000 // ms
@@ -76,9 +75,9 @@ tape('cron triggers', function (t) {
       })
     }
   ]
-  var ticks = 0
   var aEmissions = 0
   var bEmissions = 0
+  var ticks
   t.plan(3)
   return factory({ jobs: jobs })
   .then(function (sched) {
@@ -94,8 +93,35 @@ tape('cron triggers', function (t) {
   })
   .then(() => bb.delay(20))
   .then(function () {
-    t.is(ticks, expectedTicks, 'cron ticks per expectation')
+    t.truthy((expectedTicks - 1) < ticks < (expectedTicks + 1), 'cron ticks per expectation')
     t.truthy((aTicks - 1) < aEmissions < (aTicks + 1), 'cron ticks per expectation on trigger a')
     t.truthy((bTicks - 1) < bEmissions < (bTicks + 1), 'cron ticks per expectation on trigger b')
+  })
+})
+
+test('long running triggers', function (t) {
+  var scheduler
+  var jobs = [
+    {
+      id: 'forever_trigger_job',
+      trigger: new TriggerRrule({ rrule: 'FREQ=SECONDLY' })
+    }
+  ]
+  var ticks = 0
+  t.plan(1)
+  return factory({ jobs: jobs })
+  .then(function (sched) {
+    scheduler = sched
+    return sched.start()
+  })
+  .then(function (observable) {
+    observable.forEach(function (evt) {
+      ++ticks
+    })
+  })
+  .then(function () { return bb.delay(2000) })
+  .then(function () {
+    scheduler.stop()
+    t.truthy(2 < ticks <= 3, 'rrule ticks per expectation') // eslint-disable-line
   })
 })

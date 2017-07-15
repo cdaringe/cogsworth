@@ -3,10 +3,15 @@
 var Trigger = require('cogsworth-trigger').Trigger
 var CronEmitter = require('cron-emitter')
 var debug = require('debug')('cogsworth:TriggerCron')
+var cronParser = require('cron-parser')
 
 function TriggerCron (opts) {
   Trigger.call(this, opts)
-  if (!opts.cron || typeof opts.cron !== 'string') {
+  if (
+    !opts.cron ||
+    typeof opts.cron !== 'string' ||
+    !cronParser.parseExpression(opts.cron)
+  ) {
     throw new Error('cron string required')
   }
   this.cron = opts.cron
@@ -25,10 +30,9 @@ TriggerCron.prototype.start = function () {
   this.emitter.on(this.cronName, function () {
     var date = new Date()
     debug('cron trigger fired: ' + this.cron + ' (' + date.toISOString() + ')')
-    this.observer.next(date)
+    this.observer.next({ date: date })
   }.bind(this))
   this.emitter.on('ended', this.stop.bind(this))
-  Trigger.prototype.start.call(this)
 }
 
 TriggerCron.prototype.stop = function () {
@@ -43,6 +47,10 @@ TriggerCron.prototype.stop = function () {
 
 TriggerCron.prototype.toJSON = function () {
   return { cron: this.cron.toString() }
+}
+
+Trigger.prototype.toString = function () {
+  return this.cron.toString()
 }
 
 TriggerCron.id = 0

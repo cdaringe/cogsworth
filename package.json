@@ -7,6 +7,8 @@
     "lint": "standard",
     "precommit": "run-p lint test",
     "publish": "lerna exec -- npm publish",
+    "postpublish": "gh-pages -d docs/build",
+    "docs:build": "cd docs && npm i && npm run build",
     "test": "lerna exec -- npm test"
   },
   "repository": {

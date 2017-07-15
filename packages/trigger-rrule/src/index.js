@@ -14,8 +14,20 @@ function TriggerRrule (opts) {
 TriggerRrule.prototype = Object.create(Trigger.prototype)
 TriggerRrule.prototype.constructor = TriggerRrule
 
-TriggerRrule.prototype.getNextTriggerEvent = function (date, isFirstRequest) {
-  return this.rrule.after(date, isFirstRequest)
+TriggerRrule.prototype.scheduleNext = function (date, isFirst) {
+  var next = this.getEventAfter({ date: date, inclusive: isFirst })
+  if (!next || this.isExpired(date)) return this.stop()
+  debug('next tick at: ' + next.toISOString())
+  var msUntilNext = next.getTime() - Date.now()
+  if (msUntilNext < 0) msUntilNext = 0
+  setTimeout(function () {
+    this.observer.next({ date: next })
+    if (this.state === 'RUNNING') this.scheduleNext(next)
+  }.bind(this, next), msUntilNext)
+}
+
+TriggerRrule.prototype.getEventAfter = function (opts) {
+  return this.rrule.after(opts.date, opts.inclusive)
 }
 
 TriggerRrule.prototype.initRrule = function (rrule) {
@@ -32,23 +44,20 @@ TriggerRrule.prototype.initRrule = function (rrule) {
 
 TriggerRrule.prototype.start = function () {
   Trigger.prototype.start.call(this)
-  this.isRunning = true
-}
-
-TriggerRrule.prototype.shouldStop = function (date) {
-  var after = this.rrule.after(date, false)
-  return !after
+  this.scheduleNext(this.startDate, true)
 }
 
 TriggerRrule.prototype.stop = function () {
-  debug('stopping rrule trigger: ' + this.rrule.toString())
   Trigger.prototype.stop.call(this)
-  this.observer.complete()
-  this.isRunning = false
+  debug('stopping rrule trigger: ' + this.rrule.toString())
 }
 
 TriggerRrule.prototype.toJSON = function () {
   return { rrule: this.rrule.toString() }
+}
+
+TriggerRrule.prototype.toString = function () {
+  return this.rrule.toString()
 }
 
 module.exports = TriggerRrule

@@ -45,7 +45,7 @@ StorageMemory.prototype.update = function (value) {
  * @param {*} [id]
  * @returns {Promise<*>}
  */
-StorageMemory.prototype.remove = function (id) {
+StorageMemory.prototype.delete = function (id) {
   if (id === null || id === undefined) {
     this.store = {}
   } else {

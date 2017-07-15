@@ -9,6 +9,7 @@
   "dependencies": {
     "cogsworth-trigger": "^0.0.2",
     "cron-emitter": "*",
+    "cron-parser": "^2.4.1",
     "debug": "^2.6.8",
     "rxjs": "^5.4.2"
   },

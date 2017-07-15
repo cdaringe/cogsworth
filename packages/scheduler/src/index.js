@@ -53,15 +53,18 @@ Scheduler.prototype.addJob = function (_job) {
 }
 
 Scheduler.prototype.deleteJob = function (id) {
-  if (!this.jobSubscriptions[id]) {
-    throw new Error('no job id ' + id)
-  }
+  if (!this.jobSubscriptions[id]) throw new Error('no job id ' + id)
   this.jobSubscriptions[id].unsubscribe()
   delete this.jobSubscriptions[id]
-  debug('remaining unfininshed job triggers: ' + Object.keys(this.jobSubscriptions).length)
-  if (!Object.keys(this.jobSubscriptions).length && this.completeOnEmpty) {
-    return this.stop()
-  }
+  return this.storage.get(id)
+  .then(function (job) { job.trigger.stop() })
+  .then(function () { this.storage.delete(id) }.bind(this))
+  .then(function () {
+    debug('remaining unfininshed job triggers: ' + Object.keys(this.jobSubscriptions).length)
+    if (!Object.keys(this.jobSubscriptions).length && this.completeOnEmpty) {
+      return this.stop()
+    }
+  }.bind(this))
 }
 
 Scheduler.prototype.getJobs = function () {
