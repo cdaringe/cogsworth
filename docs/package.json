@@ -48,9 +48,11 @@
     "webpack-manifest-plugin": "1.1.0",
     "whatwg-fetch": "2.0.3"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "raw-loader": "^0.5.1"
+  },
   "scripts": {
-    "start": "node scripts/start.js",
+    "start": "rm -f node_modules/cogsworth && ln -s ../../cogsworth node_modules/cogsworth && node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom"
   },
