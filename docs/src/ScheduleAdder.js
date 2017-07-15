@@ -50,19 +50,19 @@ export default class ScheduleAdder extends Component {
     // const { ...rest } = this.props
     var errorMessage = this.getError()
     if (errorMessage) return this.setState({ ...this.state, ...{ errorMessage } })
-    var job = {
+    var schedule = {
       id: this.state.name,
       trigger: this.getTrigger(this.state.frequency, this.state.pattern)
     }
-    this.props.onAdd(job)
+    this.props.onAdd(schedule)
   }
   render () {
     let { name, frequency, pattern } = this.state
-    const job = this.props.job || this.state.job || {}
-    if (job.trigger) {
-      pattern = job.trigger.toString()
-      if (job.trigger.constructor.name.match(/rrule/i)) frequency = 'rrule'
-      else if (job.trigger.constructor.name.match(/cron/i)) frequency = 'cron'
+    const schedule = this.props.schedule || this.state.schedule || {}
+    if (schedule.trigger) {
+      pattern = schedule.trigger.toString()
+      if (schedule.trigger.constructor.name.match(/rrule/i)) frequency = 'rrule'
+      else if (schedule.trigger.constructor.name.match(/cron/i)) frequency = 'cron'
     }
     const Button = this.props.remove ? ContentRemove : ContentAdd
     const disabled = !!this.props.remove
@@ -71,7 +71,7 @@ export default class ScheduleAdder extends Component {
       : (this.props.remove ? this.props.onRemove : () => this.onAdd())
     return (
       <div className='scheduler__adder'>
-        <TextField autoFocus={this.props.autoFocus} onChange={(a, value) => this.setName(value)} disabled={disabled} hintText='Name' value={job.id || name || ''} />
+        <TextField autoFocus={this.props.autoFocus} onChange={(a, value) => this.setName(value)} disabled={disabled} hintText='Name' value={schedule.id || name || ''} />
         <SelectField onChange={(a, b, value) => this.setFrequency(value)} disabled={disabled} floatingLabelText='Frequency' value={frequency}>
           <MenuItem value='cron' primaryText='CRON' />
           <MenuItem value='rrule' primaryText='RRULE' />

@@ -19,39 +19,39 @@ export default class Home extends Component {
   constructor (props) {
     super(props)
     this.scheduler = window.scheduler = new Scheduler()
-    this.everySecondCronJob = {
+    this.everySecondCronSchedule = {
       id: 'every second',
       trigger: new TriggerCron({ cron: '* * * * * *' })
     }
-    this.everyThreeSecondRruleJob = {
+    this.everyThreeSecondRruleSchedule = {
       id: 'every 3rd second',
       trigger: new TriggerRrule({ rrule: 'FREQ=SECONDLY;INTERVAL=3' })
     }
     this.state = {
-      jobs: {}
+      schedules: {}
     }
   }
 
-  addJob (job) {
-    return this.scheduler.addJob(job).then(job => {
+  addSchedule (schedule) {
+    return this.scheduler.addSchedule(schedule).then(schedule => {
       var state = Object.assign({}, this.state)
-      var newJob = Object.assign({}, job, {
+      var newSchedule = Object.assign({}, schedule, {
         data: [],
         series: this.chart.addSeries({
-          name: job.id
+          name: schedule.id
         })
       })
-      state.jobs[job.id] = newJob
+      state.schedules[schedule.id] = newSchedule
       this.setState(state)
     })
   }
 
-  removeJob (job) {
-    return this.scheduler.deleteJob(job.id)
+  removeSchedule (schedule) {
+    return this.scheduler.deleteSchedule(schedule.id)
     .then(() => {
       var state = Object.assign({}, this.state)
-      state.jobs[job.id].series.remove()
-      delete state.jobs[job.id]
+      state.schedules[schedule.id].series.remove()
+      delete state.schedules[schedule.id]
       this.setState(state)
     })
   }
@@ -59,31 +59,31 @@ export default class Home extends Component {
   subscribe (obs) {
     var onScreenDuration = 5000
     obs.subscribe(evt => {
-      var jobId = evt.job.id
-      var job = this.state.jobs[jobId]
+      var scheduleId = evt.schedule.id
+      var schedule = this.state.schedules[scheduleId]
       var tickDate = new Date(evt.trigger.date)
-      job.data.push(tickDate)
-      job.series.addPoint([tickDate.getTime(), 0], true)
+      schedule.data.push(tickDate)
+      schedule.series.addPoint([tickDate.getTime(), 0], true)
       var lagDate = new Date(tickDate.getTime() - onScreenDuration)
       this.chart.xAxis[0].setExtremes(lagDate.getTime(), tickDate.getTime())
-      setTimeout(function (jobId) {
+      setTimeout(function (scheduleId) {
         var purgeThru = new Date(Date.now() - onScreenDuration)
-        var job = this.state.jobs[jobId]
-        if (!job) return
-        while (job.data[0] && job.data[0].getTime() <= purgeThru) {
-          job.data.shift()
-          job.series.removePoint(0)
+        var schedule = this.state.schedules[scheduleId]
+        if (!schedule) return
+        while (schedule.data[0] && schedule.data[0].getTime() <= purgeThru) {
+          schedule.data.shift()
+          schedule.series.removePoint(0)
         }
-      }.bind(this, jobId), onScreenDuration)
+      }.bind(this, scheduleId), onScreenDuration)
     })
   }
   componentDidMount () {
     return loadDemoChart(hc => {
       this.chart = hc
       return Promise.resolve()
-      .then(() => this.addJob(this.everySecondCronJob))
-      .then(() => this.addJob(this.everyThreeSecondRruleJob))
-      .then(job => this.scheduler.start())
+      .then(() => this.addSchedule(this.everySecondCronSchedule))
+      .then(() => this.addSchedule(this.everyThreeSecondRruleSchedule))
+      .then(schedule => this.scheduler.start())
       .then(obs => this.subscribe(obs))
     })
   }
@@ -95,9 +95,9 @@ export default class Home extends Component {
         <div dangerouslySetInnerHTML={{ __html: marked(subtitle) }} />
         <div id='chart' />
         <form style={{textAlign: 'center'}}>
-          <ScheduleAdder autoFocus add onAdd={job => this.addJob(job)} />
-          {map(this.state.jobs, (job, ndx) => (
-            <ScheduleAdder key={ndx} job={job} remove onRemove={() => this.removeJob(job)} unremovable={ndx === 'every second'} />
+          <ScheduleAdder autoFocus add onAdd={schedule => this.addSchedule(schedule)} />
+          {map(this.state.schedules, (schedule, ndx) => (
+            <ScheduleAdder key={ndx} schedule={schedule} remove onRemove={() => this.removeSchedule(schedule)} unremovable={ndx === 'every second'} />
           ))}
         </form>
         <div dangerouslySetInnerHTML={{ __html: marked(demoIntroMd) }} />

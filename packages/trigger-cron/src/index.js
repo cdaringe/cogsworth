@@ -1,7 +1,7 @@
 'use strict'
 
 var Trigger = require('cogsworth-trigger').Trigger
-var CronEmitter = require('cron-emitter')
+var CronEmitter = require('xenv-cron-emitter')
 var debug = require('debug')('cogsworth:TriggerCron')
 var cronParser = require('cron-parser')
 
