@@ -1,7 +1,7 @@
 'use strict'
 
 var Observable = require('rxjs/Observable').Observable
-var debug = require('debug')('cogsworth:Trigger')
+// var debug = require('debug')('cogsworth:Trigger')
 
 /**
  * Skeleton class/interface for triggers
