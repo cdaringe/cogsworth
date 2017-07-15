@@ -2,7 +2,7 @@
 
 easy &amp; capable scheduling for node &amp; the browser
 
-https://app.codeship.com/projects/e6cd4ce0-4bd1-0135-2de1-02fedcef81c5/status?branch=master
+[ ![Codeship Status for cdaringe/cogsworth](https://app.codeship.com/projects/e6cd4ce0-4bd1-0135-2de1-02fedcef81c5/status?branch=master)](https://app.codeship.com/projects/232848)
 
 <img src="https://github.com/cdaringe/cogsworth/blob/master/img/cogsworth.gif?raw=true" alt="cogsworth" />
 
