@@ -1,7 +1,7 @@
 {
   "name": "cogsworth-trigger-cron",
   "version": "0.0.2",
-  "description": "easy & capable job scheduling for node & the browser",
+  "description": "easy & capable scheduling for node & the browser",
   "main": "src/index.js",
   "scripts": {
     "test": "echo 'no tests'"

@@ -16,7 +16,19 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Test",
+      "name": "Test Micro",
+      "program": "${workspaceRoot}/packages/micro/node_modules/ava/profile.js",
+      "args": [
+        "${workspaceRoot}/packages/micro/test/api.test.js"
+      ],
+      "env": {
+        "DEBUG": "cogsworth:*"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Test Scheduler",
       "program": "${workspaceRoot}/packages/scheduler/node_modules/ava/profile.js",
       "env": {
         "DEBUG": "cogsworth:*"

@@ -10,7 +10,8 @@ SimpleTrigger.prototype = Object.create(Trigger.prototype)
 SimpleTrigger.prototype.constructor = SimpleTrigger
 
 SimpleTrigger.prototype.start = function () {
-  debug('starting trigger')
+  Trigger.prototype.start.call(this)
+  debug('starting SimpleTrigger')
   setTimeout(function () {
     this.observer.next('SIMPLE_MESSAGE')
     this.stop()
@@ -18,12 +19,8 @@ SimpleTrigger.prototype.start = function () {
 }
 
 SimpleTrigger.prototype.stop = function () {
-  debug('stopping trigger')
-  this.observer.complete()
-}
-
-SimpleTrigger.prototype.getStream = function () {
-  return this.stream
+  Trigger.prototype.stop.call(this)
+  debug('stopping SimpleTrigger')
 }
 
 module.exports = SimpleTrigger

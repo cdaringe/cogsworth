@@ -1,14 +1,14 @@
 {
   "name": "cogsworth-scheduler",
   "version": "0.0.2",
-  "description": "easy & capable job scheduling for node & the browser",
+  "description": "easy & capable scheduling for node & the browser",
   "main": "src/index.js",
   "scripts": {
     "test": "run-p test:*",
     "test:node": "ava"
   },
   "dependencies": {
-    "cogsworth-job": "^0.0.2",
+    "cogsworth-schedule": "^0.0.2",
     "cogsworth-storage-memory": "^0.0.2",
     "debug": "^2.6.8",
     "rxjs": "^5.4.2"

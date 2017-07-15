@@ -11,14 +11,14 @@ test('Scheduler', function (t) {
   t.truthy(s1.stop, 'scheduler, stopable')
 })
 
-test('bogus job', function (t) {
-  t.throws(() => new Scheduler().addJob(), Error, 'errors adding bogus job')
+test('bogus schedule', function (t) {
+  t.throws(() => new Scheduler().addSchedule(), Error, 'errors adding bogus schedule')
 })
 
-test('add job', function (t) {
+test('add schedule', function (t) {
   var scheduler
   t.plan(2)
-  return factory({ randomJobs: 1 })
+  return factory({ randomSchedules: 1 })
   .then(sched => {
     scheduler = sched
     return scheduler.start()
@@ -26,17 +26,17 @@ test('add job', function (t) {
   .then(function (observable) {
     return Promise.resolve(observable.forEach(function (evt) {
       t.truthy(evt, 'scheduler emits ticks')
-      t.truthy(evt.job.id, 'scheduler emits job data in ticks')
+      t.truthy(evt.schedule.id, 'scheduler emits schedule data in ticks')
       scheduler.stop()
     }))
   })
 })
 
-test('start scheduler, run many jobs', function (t) {
+test('start scheduler, run many schedules', function (t) {
   var ticks = 0
   t.plan(1)
   var numSimpleTriggerTicks = 10
-  return factory({ randomJobs: numSimpleTriggerTicks })
+  return factory({ randomSchedules: numSimpleTriggerTicks })
   .then(function (sched) {
     return sched.start()
   })
@@ -59,7 +59,7 @@ test('onTick (vs observable)', function (t) {
         ++ticks
       }
     },
-    randomJobs: numSimpleTriggerTicks
+    randomSchedules: numSimpleTriggerTicks
   })
   .then(function (sched) { return sched.start() })
   .then(() => bb.delay(50))
@@ -73,7 +73,7 @@ test('stop scheduler', function (t) {
   var numSimpleTriggerTicks = 10
   var ticks = 0
   var scheduler
-  return factory({ randomJobs: numSimpleTriggerTicks })
+  return factory({ randomSchedules: numSimpleTriggerTicks })
   .then(function (sched) {
     scheduler = sched
     return sched.start()

@@ -1,9 +1,11 @@
 {
   "name": "cogsworth-micro",
   "version": "0.0.2",
-  "description": "easy & capable job scheduling for node & the browser",
+  "description": "easy & capable scheduling for node & the browser",
   "main": "src/index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "rm -rf coverage .nyc_output && nyc --reporter=lcov ava"
+  },
   "dependencies": {
     "cogsworth-scheduler": "^0.0.2",
     "cogsworth-storage-memory": "^0.0.2",
@@ -26,6 +28,7 @@
     "rfc2245",
     "ical",
     "icalendar",
+    "schedule",
     "job"
   ],
   "author": "cdaringe",
@@ -36,9 +39,11 @@
   "homepage": "https://github.com/cdaringe/cogsworth#readme",
   "devDependencies": {
     "ava": "^0.20.0",
+    "axios": "^0.16.2",
     "bluebird": "^3.5.0",
     "lodash": "^4.17.4",
     "npm-run-all": "^4.0.2",
+    "nyc": "^11.0.3",
     "run-p": "0.0.0"
   }
 }

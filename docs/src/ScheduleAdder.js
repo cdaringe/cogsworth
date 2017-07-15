@@ -47,6 +47,7 @@ export default class ScheduleAdder extends Component {
     }
   }
   onAdd () {
+    // const { ...rest } = this.props
     var errorMessage = this.getError()
     if (errorMessage) return this.setState({ ...this.state, ...{ errorMessage } })
     var job = {
@@ -65,17 +66,19 @@ export default class ScheduleAdder extends Component {
     }
     const Button = this.props.remove ? ContentRemove : ContentAdd
     const disabled = !!this.props.remove
+    const onClick = this.props.unremovable
+      ? () => {}
+      : (this.props.remove ? this.props.onRemove : () => this.onAdd())
     return (
       <div className='scheduler__adder'>
-        <TextField onChange={(a, value) => this.setName(value)} disabled={disabled} hintText='Name' value={job.id || name || ''} />
+        <TextField autoFocus={this.props.autoFocus} onChange={(a, value) => this.setName(value)} disabled={disabled} hintText='Name' value={job.id || name || ''} />
         <SelectField onChange={(a, b, value) => this.setFrequency(value)} disabled={disabled} floatingLabelText='Frequency' value={frequency}>
           <MenuItem value='cron' primaryText='CRON' />
           <MenuItem value='rrule' primaryText='RRULE' />
         </SelectField>
         <TextField onChange={(a, value) => this.setPattern(value)} disabled={disabled} hintText='Add pattern' value={pattern || ''} />
-        <FloatingActionButton
-          secondary={this.props.remove}>
-          <Button onClick={this.props.remove ? this.props.onRemove : () => this.onAdd()} />
+        <FloatingActionButton disabled={!!this.props.unremovable} secondary={this.props.remove}>
+          <Button disabled={!!this.props.unremovable} onClick={onClick} />
         </FloatingActionButton>
         <Snackbar
           open={!!this.state.errorMessage}

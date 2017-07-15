@@ -2,27 +2,33 @@ var Koa = require('koa')
 var bodyParser = require('koa-bodyparser')
 var Scheduler = require('cogsworth-scheduler')
 var { get, post, put, delete: del } = require('koa-route')
-var scheduler = new Scheduler()
-var port = process.env.PORT || 8080
+var PORT = process.env.PORT || 8080
 var simpleResponses = require('./simple-responses')
-var toJob = require('./toJob')
+var toSchedule = require('./toSchedule')
 
 module.exports = {
-  start () {
+  start (opts) {
+    opts = opts || {}
+    var port = opts.port || PORT
+    var scheduler = this.scheduler = opts.scheduler || new Scheduler()
     var app = new Koa()
     app.use(bodyParser())
     app.use(simpleResponses)
-    app.use(get('/', (ctx) => scheduler.getJobs()))
-    app.use(get('/:id', (ctx, id) => scheduler.get(id)))
-    app.use(post('/', (ctx) => scheduler.addJob(toJob(ctx))))
+    app.use(get('/', (ctx) => scheduler.getSchedules()))
+    app.use(get('/:id', (ctx, id) => scheduler.getSchedule(id)))
+    app.use(post('/', (ctx) => scheduler.addSchedule(toSchedule(ctx))))
     app.use(put('/:id', (ctx, id) => {
       return Promise.resolve()
-      .then(() => scheduler.deleteJob(id))
-      .then(() => scheduler.addJob(toJob(ctx)))
+      .then(() => scheduler.deleteSchedule(id))
+      .then(() => scheduler.addSchedule(toSchedule(ctx)))
     }))
-    app.use(del('/:id', (ctx, id) => scheduler.deleteJob(id)))
-    app.listen(port)
+    app.use(del('/:id', (ctx, id) => scheduler.deleteSchedule(id)))
     console.log(`listening on port ${port}`)
+    this.server = app.listen(port)
     return scheduler.start()
+  },
+  stop () {
+    console.log('stopping cogsworth-micro')
+    return this.scheduler.stop().then(() => this.server.close())
   }
 }

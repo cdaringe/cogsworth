@@ -13,7 +13,7 @@ module.exports = {
         animation: Highcharts.svg,
         events: { load: function () { return cb(this) } } // eslint-disable-line
       },
-      title: { text: ' ' },
+      title: { text: 'Schedule Demo' },
       xAxis: {
         type: 'datetime',
         tickPixelInterval: 500
@@ -34,7 +34,15 @@ module.exports = {
         }
       },
       legend: { enabled: true },
-      exporting: { enabled: false }
+      exporting: { enabled: false },
+      plotOptions: {
+        series: {
+          // http://api.highcharts.com/highcharts/plotOptions.series.marker
+          marker: {
+            radius: 16
+          }
+        }
+      }
     })
   }
 }

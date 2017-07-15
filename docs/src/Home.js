@@ -2,14 +2,15 @@ import React, { Component } from 'react'
 import * as Scheduler from '../../packages/scheduler/'
 import * as TriggerCron from '../../packages/trigger-cron/'
 import * as TriggerRrule from '../../packages/trigger-rrule/'
-import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card'
 import ScheduleAdder from './ScheduleAdder'
 import { loadDemoChart } from './util/demo'
-import Markdown from 'react-remarkable'
-
+import marked from 'marked'
+import Paper from 'material-ui/Paper'
+import Divider from 'material-ui/Divider'
 import map from 'lodash/map'
+const projectMd = require('raw-loader!cogsworth/README.md') // eslint-disable-line
 
-const demoIntroMd = `Use the below form to add/remove schedules from the demo.
+const demoIntroMd = `Use the above form to add/remove schedules from the demo.
 
 For demo purposes, you can enter schedules in either [cron](https://en.wikipedia.org/wiki/Cron/) syntax or the standard [iCalendar](https://icalendar.org/) [RRULE](https://jakubroztocil.github.io/rrule/) awesome syntax!
 `
@@ -87,23 +88,23 @@ export default class Home extends Component {
     })
   }
   render () {
+    const subtitle = '#### a javascript scheduling suite for [node.js](https://nodejs.org/en/) and the browser'
     return (
-      <div>
-        <Card>
-          <CardHeader title='Cogsworth' subtitle='a javascript scheduling suite' />
-          <CardMedia><div id='chart' /></CardMedia>
-          <CardTitle title='Demo' subtitle='Play with schedules in real-time' />
-          <CardText>
-            <Markdown source={demoIntroMd} />
-          </CardText>
-          <CardActions style={{textAlign: 'center'}}>
-            {map(this.state.jobs, (job, ndx) => (
-              <ScheduleAdder key={ndx} job={job} remove onRemove={() => this.removeJob(job)} />
-            ))}
-            <ScheduleAdder add onAdd={job => this.addJob(job)} />
-          </CardActions>
-        </Card>
-      </div>
+      <Paper className='content'>
+        <h1>Cogsworth</h1>
+        <div dangerouslySetInnerHTML={{ __html: marked(subtitle) }} />
+        <div id='chart' />
+        <form style={{textAlign: 'center'}}>
+          <ScheduleAdder autoFocus add onAdd={job => this.addJob(job)} />
+          {map(this.state.jobs, (job, ndx) => (
+            <ScheduleAdder key={ndx} job={job} remove onRemove={() => this.removeJob(job)} unremovable={ndx === 'every second'} />
+          ))}
+        </form>
+        <div dangerouslySetInnerHTML={{ __html: marked(demoIntroMd) }} />
+        <br /><br />
+        <Divider />
+        <div dangerouslySetInnerHTML={{ __html: marked(projectMd) }} />
+      </Paper>
     )
   }
 }

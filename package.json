@@ -1,14 +1,15 @@
 {
   "name": "cogsworth",
   "version": "0.0.1",
-  "description": "easy & capable job scheduling for node & the browser",
+  "description": "easy & capable scheduling for node & the browser",
   "main": "index.js",
   "scripts": {
     "lint": "standard",
     "precommit": "run-p lint test",
     "publish": "lerna exec -- npm publish",
-    "postpublish": "gh-pages -d docs/build",
-    "docs:build": "cd docs && npm i && npm run build",
+    "postpublish": "run-s docs:build docs:publish",
+    "docs:publish": "gh-pages -d docs/build",
+    "docs:build": "cd docs && npm install && npm run build",
     "test": "lerna exec -- npm test"
   },
   "repository": {
@@ -37,5 +38,13 @@
     "lerna": "^2.0.0",
     "npm-run-all": "^4.0.2",
     "standard": "^10.0.2"
+  },
+  "standard": {
+    "ignore": [
+      "**/out/",
+      "docs/config/",
+      "docs/public/",
+      "docs/scripts/"
+    ]
   }
 }

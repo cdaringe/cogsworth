@@ -5,14 +5,35 @@ html, body, #root, #root > div {
   height: 100%;
   width: 100%;
 }
-#root > div {
-  display: flex;
-  flex-direction: column;
-}
+
 
 #content {
+  align-items: center;
   display: flex;
   flex-grow: 1;
   flex-direction: column;
   width: 100%;
+}
+
+.content {
+  max-width: 100vw;
+  min-width: 80vw;
+  height: 100%;
+  padding: 0 2em 2em 2em;
+  transition: all 0.2s;
+}
+
+@media (min-width: 1200px) {
+  .content {
+    max-width: 80vw;
+  }
+}
+
+#chart {
+  box-shadow: 0 0 15px;
+  border-radius: 4px;
+}
+
+#chart > div {
+  border-radius: 4px;
 }

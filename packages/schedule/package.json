@@ -1,7 +1,7 @@
 {
-  "name": "cogsworth-job",
+  "name": "cogsworth-schedule",
   "version": "0.0.2",
-  "description": "easy & capable job scheduling for node & the browser",
+  "description": "easy & capable scheduling for node & the browser",
   "main": "src/index.js",
   "scripts": {
     "test": "echo 'no tests'"
@@ -19,12 +19,16 @@
     "rfc2245",
     "ical",
     "icalendar",
+    "schedule",
     "job"
   ],
   "author": "cdaringe",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/cdaringe/cogsworth/issues"
+  },
+  "dependencies": {
+    "cogsworth-trigger": "^0.0.2"
   },
   "homepage": "https://github.com/cdaringe/cogsworth#readme"
 }

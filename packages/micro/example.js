@@ -1,8 +1,7 @@
 process.env.DEBUG = '*'
 require('./').start()
 .then(triggerStream => {
-  return triggerStream.forEach(({ job: { id } }) => {
-    console.log(id)
-    // kafka.push(evt)
+  return triggerStream.forEach(({ schedule: { id }, trigger: { date } }) => {
+    console.log(`schedule ${id} fired at ${date}`)
   })
 })

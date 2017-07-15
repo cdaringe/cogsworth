@@ -42,6 +42,12 @@ TriggerRrule.prototype.initRrule = function (rrule) {
   throw new Error('invalid rrule: ' + rrule)
 }
 
+TriggerRrule.prototype.isExpired = function (date) {
+  if (!date) throw new Error('must pass date')
+  if (!this.endDate) return false
+  return date > this.endDate
+}
+
 TriggerRrule.prototype.start = function () {
   Trigger.prototype.start.call(this)
   this.scheduleNext(this.startDate, true)

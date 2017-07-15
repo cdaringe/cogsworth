@@ -12,7 +12,7 @@ test('rrule triggers', function (t) {
   var bTicks = 4
   var expectedTicks = aTicks + bTicks
   var scheduler
-  var jobs = [
+  var schedules = [
     {
       id: 'rrule_test_a',
       trigger: new TriggerRrule({ rrule: 'FREQ=SECONDLY;COUNT=' + aTicks })
@@ -26,7 +26,7 @@ test('rrule triggers', function (t) {
   var aEmissions = 0
   var bEmissions = 0
   t.plan(3)
-  return factory({ jobs: jobs })
+  return factory({ schedules: schedules })
   .then(function (sched) {
     scheduler = sched
     return sched.start()
@@ -35,9 +35,9 @@ test('rrule triggers', function (t) {
     var chain = observable
     .forEach(function (evt) {
       ++ticks
-      if (evt.job.id === jobs[0].id) ++aEmissions
-      else if (evt.job.id === jobs[1].id) ++bEmissions
-      else throw new Error('unable to determine emitted job')
+      if (evt.schedule.id === schedules[0].id) ++aEmissions
+      else if (evt.schedule.id === schedules[1].id) ++bEmissions
+      else throw new Error('unable to determine emitted schedule')
     })
     return chain
   })
@@ -57,7 +57,7 @@ test('cron triggers', function (t) {
   var expectedTicks = aTicks + bTicks
   var t1 = new Date(Date.now() + 100)
   var t2 = new Date(t1.getTime() + cronDuration)
-  var jobs = [
+  var schedules = [
     {
       id: 'cron_test_a',
       trigger: new TriggerCron({
@@ -79,16 +79,16 @@ test('cron triggers', function (t) {
   var bEmissions = 0
   var ticks
   t.plan(3)
-  return factory({ jobs: jobs })
+  return factory({ schedules: schedules })
   .then(function (sched) {
     return sched.start()
   })
   .then(function (observable) {
     return observable.forEach(function (evt) {
       ++ticks
-      if (evt.job.id === jobs[0].id) ++aEmissions
-      else if (evt.job.id === jobs[1].id) ++bEmissions
-      else throw new Error('unable to determine emitted job')
+      if (evt.schedule.id === schedules[0].id) ++aEmissions
+      else if (evt.schedule.id === schedules[1].id) ++bEmissions
+      else throw new Error('unable to determine emitted schedule')
     })
   })
   .then(() => bb.delay(20))
@@ -101,15 +101,15 @@ test('cron triggers', function (t) {
 
 test('long running triggers', function (t) {
   var scheduler
-  var jobs = [
+  var schedules = [
     {
-      id: 'forever_trigger_job',
+      id: 'forever_trigger_schedule',
       trigger: new TriggerRrule({ rrule: 'FREQ=SECONDLY' })
     }
   ]
   var ticks = 0
   t.plan(1)
-  return factory({ jobs: jobs })
+  return factory({ schedules: schedules })
   .then(function (sched) {
     scheduler = sched
     return sched.start()

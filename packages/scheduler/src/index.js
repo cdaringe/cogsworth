@@ -1,7 +1,7 @@
 'use strict'
 
 var StorageMemory = require('cogsworth-storage-memory')
-var Job = require('cogsworth-job')
+var Schedule = require('cogsworth-schedule')
 var Observable = require('rxjs/Observable').Observable
 var debug = require('debug')('cogsworth:Scheduler')
 
@@ -16,7 +16,7 @@ var debug = require('debug')('cogsworth:Scheduler')
  */
 function Scheduler (opts) {
   opts = opts || {}
-  this.jobSubscriptions = {}
+  this.subscriptions = {}
   this.state = 'STOPPED'
   this.storage = opts.storage || new StorageMemory()
   this.triggerObservable = Observable.create(function (observer) {
@@ -27,62 +27,63 @@ function Scheduler (opts) {
 }
 
 /**
- * Add a job to the system
+ * Add a schedule to the system
  */
-Scheduler.prototype.addJob = function (_job) {
-  var job = new Job(_job)
-  if (!job.id) job.id = Math.random().toString().substr(2)
-  return this.storage.create(job)
-  .then(function subscribe (job) {
-    debug('job added: ' + job.id)
-    var sub = job.trigger.getStream().subscribe({
+Scheduler.prototype.addSchedule = function (_schedule) {
+  var schedule = new Schedule(_schedule)
+  if (!schedule.id) schedule.id = Math.random().toString().substr(2)
+  return this.storage.create(schedule)
+  .then(function subscribe (schedule) {
+    debug('schedule added: ' + schedule.id)
+    var sub = schedule.trigger.stream.subscribe({
       next: function emitTriggerEvent (triggerMeta) {
         if (this.state !== 'RUNNING') return
-        var payload = { job: job, trigger: triggerMeta }
+        var payload = { schedule: schedule, trigger: triggerMeta }
+        if (!this.triggerObserver) throw new Error('scheduler has not be subscribed to')
         this.triggerObserver.next(payload)
       }.bind(this),
       complete: function () {
-        debug('job completed: ' + job.id)
-        return this.deleteJob(job.id)
+        debug('schedule completed: ' + schedule.id)
+        return this.deleteSchedule(schedule.id)
       }.bind(this)
     })
-    this.jobSubscriptions[job.id] = sub
-    if (!this.state.match(/STOP/i)) job.trigger.start()
-    return job
+    this.subscriptions[schedule.id] = sub
+    if (!this.state.match(/STOP/i)) schedule.trigger.start()
+    return schedule
   }.bind(this))
 }
 
-Scheduler.prototype.deleteJob = function (id) {
-  if (!this.jobSubscriptions[id]) throw new Error('no job id ' + id)
-  this.jobSubscriptions[id].unsubscribe()
-  delete this.jobSubscriptions[id]
+Scheduler.prototype.deleteSchedule = function (id) {
+  if (!this.subscriptions[id]) throw new Error('no schedule id ' + id)
+  this.subscriptions[id].unsubscribe()
+  delete this.subscriptions[id]
   return this.storage.get(id)
-  .then(function (job) { job.trigger.stop() })
+  .then(function (schedule) { schedule.trigger.stop() })
   .then(function () { this.storage.delete(id) }.bind(this))
   .then(function () {
-    debug('remaining unfininshed job triggers: ' + Object.keys(this.jobSubscriptions).length)
-    if (!Object.keys(this.jobSubscriptions).length && this.completeOnEmpty) {
+    debug('remaining unfininshed schedule triggers: ' + Object.keys(this.subscriptions).length)
+    if (!Object.keys(this.subscriptions).length && this.completeOnEmpty) {
       return this.stop()
     }
   }.bind(this))
 }
 
-Scheduler.prototype.getJobs = function () {
-  return this.storage.get()
+Scheduler.prototype.getSchedule = function (id) {
+  return this.storage.get(id)
 }
 
-Scheduler.prototype.getStream = function () {
-  return this.triggerObservable
+Scheduler.prototype.getSchedules = function () {
+  return this.storage.get()
 }
 
 /**
- * Execute a function against each scheduler job
+ * Execute a function against each scheduler schedule
  * @param {Function} fn
  * @returns {Promise}
  */
-Scheduler.prototype.applyToJobs = function (fn) {
+Scheduler.prototype.applyToSchedules = function (fn) {
   return this.storage.get()
-  .then(function apply (jobs) { return jobs.map(fn) })
+  .then(function apply (schedules) { return schedules.map(fn) })
 }
 
 /**
@@ -92,9 +93,9 @@ Scheduler.prototype.applyToJobs = function (fn) {
 Scheduler.prototype.start = function () {
   this.state = 'STARTING'
   debug('scheduler state: ' + this.state)
-  return this.applyToJobs(function startJob (job) {
-    debug('starting job: ' + job.id)
-    return job.trigger.start()
+  return this.applyToSchedules(function startSchedule (schedule) {
+    debug('starting schedule: ' + schedule.id)
+    return schedule.trigger.start()
   })
   .then(function () { this.state = 'RUNNING' }.bind(this))
   .then(function () {
@@ -113,9 +114,9 @@ Scheduler.prototype.start = function () {
 Scheduler.prototype.stop = function () {
   if (this.state.match(/STOP/)) return Promise.resolve(this)
   this.state = 'STOPPING'
-  this.triggerObserver.complete()
-  return this.applyToJobs(function stopJob (job) {
-    return job.trigger.stop()
+  if (this.triggerObserver) this.triggerObserver.complete()
+  return this.applyToSchedules(function stopSchedule (schedule) {
+    return schedule.trigger.stop()
   })
   .then(function () {
     this.state = 'STOPPED'

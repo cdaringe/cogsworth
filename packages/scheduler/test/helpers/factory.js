@@ -12,18 +12,18 @@ module.exports = function schedulerFactory (opts) {
     : opts.scheduler.completeOnEmpty
   var sch = new Scheduler(opts.scheduler)
   var chain = Promise.resolve(sch)
-  if (opts.randomJobs) {
-    chain = times(opts.randomJobs).reduce(function (chain, n) {
+  if (opts.randomSchedules) {
+    chain = times(opts.randomSchedules).reduce(function (chain, n) {
       return chain.then(function () {
         var trigger = new SimpleTrigger()
-        return sch.addJob({ trigger: trigger })
+        return sch.addSchedule({ trigger: trigger })
       })
     }, chain)
   }
-  if (opts.jobs) {
-    chain = opts.jobs.reduce(function (chain, job) {
+  if (opts.schedules) {
+    chain = opts.schedules.reduce(function (chain, schedule) {
       return chain.then(function () {
-        return sch.addJob(job)
+        return sch.addSchedule(schedule)
       })
     }, chain)
   }

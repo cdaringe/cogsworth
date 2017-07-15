@@ -1,8 +1,8 @@
 var Scheduler = require('../packages/scheduler/').Scheduler
 var TriggerRrule = require('../packages/trigger-rrule') // e.g. iCal
 var scheduler = new Scheduler()
-scheduler.addJob({
-  id: 'best_job',
+scheduler.addSchedule({
+  id: 'best_schedule',
   trigger: new TriggerRrule({
     rrule: 'FREQ=SECONDLY;COUNT=5'
   })
@@ -10,6 +10,6 @@ scheduler.addJob({
 .then(scheduler.start.bind(scheduler))
 .then(function (observable) {
   observable.subscribe(function logEvent (evt) {
-    console.log(evt.job.id, evt.trigger.date)
+    console.log(evt.schedule.id, evt.trigger.date)
   })
 })

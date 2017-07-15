@@ -20,11 +20,11 @@ StorageMemory.prototype.create = function (value) {
  */
 StorageMemory.prototype.get = function (id) {
   if (id === null || id === undefined) {
-    var jobCollection = []
+    var collection = []
     for (var i in this.store) {
-      jobCollection.push(this.store[i])
+      collection.push(this.store[i])
     }
-    return Promise.resolve(jobCollection)
+    return Promise.resolve(collection)
   }
   return Promise.resolve(this.store[id])
 }
