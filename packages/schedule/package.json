@@ -1,6 +1,6 @@
 {
   "name": "cogsworth-schedule",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "easy & capable scheduling for node & the browser",
   "main": "src/index.js",
   "scripts": {
@@ -28,7 +28,7 @@
     "url": "https://github.com/cdaringe/cogsworth/issues"
   },
   "dependencies": {
-    "cogsworth-trigger": "^0.0.3"
+    "cogsworth-trigger": "^0.0.4"
   },
   "homepage": "https://github.com/cdaringe/cogsworth#readme"
 }
