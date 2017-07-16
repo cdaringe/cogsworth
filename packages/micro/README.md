@@ -2,7 +2,7 @@
 
 a cogsworth microservice.
 
-rad! :100:
+rad! 💯
 
 ## usage
 
@@ -52,7 +52,7 @@ the payload of a schedule is:
 
 `node ./example.js`, from the [micro source code](https://github.com/cdaringe/cogsworth/tree/master/packages/micro)
 
-```
+```js
 🛰  micro$ node example.js
   koa:application use bodyParser +0ms
   koa:application use simpleResponses +2ms

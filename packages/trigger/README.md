@@ -11,14 +11,18 @@ The concept isn't complicated, but different syntaxes overlap in their capabilit
 
 ### properties
 
-- `stream` // RxJs Observable
-- [`startDate`] // Date, [default `new Date()`]
-- ['endDate`] // Date, [default, null]
+```js
+trigger.stream // RxJs Observable
+trigger[.startDate] // Date, [default `new Date()`]
+trigger[.endDate] // Date, [default, null]
+```
 
 ### methods
 
-- `start` // undefined, must be called if "inherited" from
-- `stop` // undefined, must be called if "inherited" from
+```js
+trigger.start // undefined, must be called if "inherited" from
+trigger.stop // undefined, must be called if "inherited" from
+```
 
 ## how do i write my own trigger?
 
