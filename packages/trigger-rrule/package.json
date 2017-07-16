@@ -1,13 +1,13 @@
 {
   "name": "cogsworth-trigger-rrule",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "easy & capable scheduling for node & the browser",
   "main": "src/index.js",
   "scripts": {
     "test": "echo 'no tests'"
   },
   "dependencies": {
-    "cogsworth-trigger": "^0.0.4",
+    "cogsworth-trigger": "^0.0.5",
     "debug": "^2.6.8",
     "rrule": "*",
     "rxjs": "^5.4.2"

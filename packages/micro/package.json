@@ -1,16 +1,16 @@
 {
   "name": "cogsworth-micro",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "easy & capable scheduling for node & the browser",
   "main": "src/index.js",
   "scripts": {
     "test": "rm -rf coverage .nyc_output && nyc --reporter=lcov ava"
   },
   "dependencies": {
-    "cogsworth-scheduler": "^0.0.4",
+    "cogsworth-scheduler": "^0.0.5",
     "cogsworth-storage-memory": "^0.0.3",
-    "cogsworth-trigger-cron": "^0.0.4",
-    "cogsworth-trigger-rrule": "^0.0.4",
+    "cogsworth-trigger-cron": "^0.0.5",
+    "cogsworth-trigger-rrule": "^0.0.5",
     "koa": "^2.3.0",
     "koa-bodyparser": "^4.2.0",
     "koa-route": "^3.2.0"
