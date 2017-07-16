@@ -9,7 +9,7 @@ var Scheduler = require('cogsworth-scheduler')
 var scheduler = new Scheduler()
 scheduler.start()
 .then(triggerStream => { // triggerStream instanceof Observable
-  return triggerStream.forEach(({ schedule: { id }, trigger: { date } }) => {
+  return triggerStream.forEach(({ id, event: { date } }) => {
     console.log(`schedule ${id} fired at ${date}`)
   })
 })

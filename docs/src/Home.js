@@ -58,10 +58,10 @@ export default class Home extends Component {
 
   subscribe (obs) {
     var onScreenDuration = 5000
-    obs.subscribe(evt => {
-      var scheduleId = evt.schedule.id
+    obs.subscribe(sched => {
+      var scheduleId = sched.id
       var schedule = this.state.schedules[scheduleId]
-      var tickDate = new Date(evt.trigger.date)
+      var tickDate = new Date(sched.event.date)
       schedule.data.push(tickDate)
       schedule.series.addPoint([tickDate.getTime(), 0], true)
       var lagDate = new Date(tickDate.getTime() - onScreenDuration)

@@ -4,8 +4,24 @@ var test = require('ava').test
 var factory = require('./helpers/factory')
 var bb = require('bluebird')
 
+var SimpleTrigger = require('../../trigger').SimpleTrigger
 var TriggerRrule = require('../../trigger-rrule/')
 var TriggerCron = require('../../trigger-cron/')
+
+test('tourist payload emitted', function (t) {
+  var tourist = { test: 2 }
+  return factory({ schedules: [
+    {
+      id: 'simple_test',
+      trigger: new SimpleTrigger({ timeout: 1 }),
+      tourist
+    }
+  ]})
+  .then(scheduler => scheduler.start())
+  .then(obs => obs.forEach(schedule => {
+    t.deepEqual(schedule.tourist, tourist, 'tourist goes in, tourist comes out')
+  }))
+})
 
 test('rrule triggers', function (t) {
   var aTicks = 2
@@ -33,10 +49,10 @@ test('rrule triggers', function (t) {
   })
   .then(function (observable) {
     var chain = observable
-    .forEach(function (evt) {
+    .forEach(function (schedule) {
       ++ticks
-      if (evt.schedule.id === schedules[0].id) ++aEmissions
-      else if (evt.schedule.id === schedules[1].id) ++bEmissions
+      if (schedule.id === schedules[0].id) ++aEmissions
+      else if (schedule.id === schedules[1].id) ++bEmissions
       else throw new Error('unable to determine emitted schedule')
     })
     return chain
@@ -84,10 +100,10 @@ test('cron triggers', function (t) {
     return sched.start()
   })
   .then(function (observable) {
-    return observable.forEach(function (evt) {
+    return observable.forEach(function (schedule) {
       ++ticks
-      if (evt.schedule.id === schedules[0].id) ++aEmissions
-      else if (evt.schedule.id === schedules[1].id) ++bEmissions
+      if (schedule.id === schedules[0].id) ++aEmissions
+      else if (schedule.id === schedules[1].id) ++bEmissions
       else throw new Error('unable to determine emitted schedule')
     })
   })
@@ -115,7 +131,7 @@ test('long running triggers', function (t) {
     return sched.start()
   })
   .then(function (observable) {
-    observable.forEach(function (evt) {
+    observable.forEach(function (schedule) {
       ++ticks
     })
   })

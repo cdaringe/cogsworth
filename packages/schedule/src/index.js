@@ -14,7 +14,9 @@ Schedule.prototype.toJSON = function () {
   var serialized = {}
   for (var k in this) {
     if (this.hasOwnProperty(k)) {
-      if (this[k] !== undefined && typeof this[k] !== 'function') serialized[k] = this[k]
+      if (this[k] !== undefined && typeof this[k] !== 'function') {
+        serialized[k] = (this[k] && this[k].toJSON) ? this[k].toJSON() : this[k]
+      }
     }
   }
   return serialized

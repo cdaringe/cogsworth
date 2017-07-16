@@ -38,7 +38,8 @@ Scheduler.prototype.addSchedule = function (_schedule) {
     var sub = schedule.trigger.stream.subscribe({
       next: function emitTriggerEvent (triggerMeta) {
         if (this.state !== 'RUNNING') return
-        var payload = { schedule: schedule, trigger: triggerMeta }
+        var payload = schedule.toJSON()
+        payload.event = triggerMeta
         if (!this.triggerObserver) throw new Error('scheduler has not be subscribed to')
         this.triggerObserver.next(payload)
       }.bind(this),

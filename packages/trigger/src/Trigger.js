@@ -26,4 +26,11 @@ Trigger.prototype.stop = function () {
   this.observer.complete()
 }
 
+Trigger.prototype.toJSON = function () {
+  return {
+    startDate: this.startDate,
+    endDate: this.endDate
+  }
+}
+
 module.exports = Trigger

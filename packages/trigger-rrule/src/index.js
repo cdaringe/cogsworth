@@ -59,7 +59,7 @@ TriggerRrule.prototype.stop = function () {
 }
 
 TriggerRrule.prototype.toJSON = function () {
-  return { rrule: this.rrule.toString() }
+  return Object.assign(Trigger.prototype.toJSON.call(this), { rrule: this.rrule.toString() })
 }
 
 TriggerRrule.prototype.toString = function () {

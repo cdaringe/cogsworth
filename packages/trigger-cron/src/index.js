@@ -46,7 +46,7 @@ TriggerCron.prototype.stop = function () {
 }
 
 TriggerCron.prototype.toJSON = function () {
-  return { cron: this.cron.toString() }
+  return Object.assign(Trigger.prototype.toJSON.call(this), { cron: this.cron.toString() })
 }
 
 Trigger.prototype.toString = function () {

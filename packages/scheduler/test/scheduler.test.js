@@ -24,9 +24,9 @@ test('add schedule', function (t) {
     return scheduler.start()
   })
   .then(function (observable) {
-    return Promise.resolve(observable.forEach(function (evt) {
-      t.truthy(evt, 'scheduler emits ticks')
-      t.truthy(evt.schedule.id, 'scheduler emits schedule data in ticks')
+    return Promise.resolve(observable.forEach(function (schedule) {
+      t.truthy(schedule, 'scheduler emits ticks')
+      t.truthy(schedule.id, 'scheduler emits schedule data in ticks')
       scheduler.stop()
     }))
   })
