@@ -45,7 +45,8 @@
       "**/out/",
       "docs/config/",
       "docs/public/",
-      "docs/scripts/"
+      "docs/scripts/",
+      "docs/build"
     ]
   }
 }
