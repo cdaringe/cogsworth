@@ -17,18 +17,18 @@ module.exports = {
     app.use(get('/', (ctx) => scheduler.getSchedules()))
     app.use(get('/:id', (ctx, id) => scheduler.getSchedule(id)))
     app.use(post('/', (ctx) => scheduler.addSchedule(toSchedule(ctx))))
-    app.use(put('/:id', (ctx, id) => {
-      return Promise.resolve()
-      .then(() => scheduler.deleteSchedule(id))
-      .then(() => scheduler.addSchedule(toSchedule(ctx)))
+    app.use(put('/:id', async function (ctx, id) {
+      await scheduler.deleteSchedule(id)
+      return scheduler.addSchedule(toSchedule(ctx))
     }))
     app.use(del('/:id', (ctx, id) => scheduler.deleteSchedule(id)))
-    console.log(`listening on port ${port}`)
     this.server = app.listen(port)
+    console.log(`listening on port ${port}`)
     return scheduler.start()
   },
-  stop () {
+  async stop () {
     console.log('stopping cogsworth-micro')
-    return this.scheduler.stop().then(() => this.server.close())
+    await this.scheduler.stop()
+    this.server.close()
   }
 }

@@ -2,7 +2,7 @@
 
 var TriggerRrule = require('cogsworth-trigger-rrule')
 var TriggerCron = require('cogsworth-trigger-cron')
-var SCHEDULE_KEYS = ['id', 'description', 'trigger', 'startDate', 'endDate']
+var SCHEDULE_KEYS = ['id', 'description', 'trigger', 'startDate', 'endDate', 'tourist']
 
 function validateTrigger (ctx, trigger) {
   var xor = 0
@@ -14,8 +14,8 @@ function validateTrigger (ctx, trigger) {
 
 module.exports = function toSchedule (ctx) {
   var payload = ctx.request.body
-  if (!payload) return ctx.throw(400, 'no schedule provided')
   var schedule = {}
+  if (!payload) return ctx.throw(400, 'no schedule provided')
   for (var key of SCHEDULE_KEYS) schedule[key] = payload[key]
   var { trigger, endDate, startDate } = schedule
   validateTrigger(ctx, trigger)
