@@ -51,8 +51,8 @@ var schedule = {
 scheduler.addSchedule(schedule)
 .then(scheduler.start.bind(scheduler))
 .then(function (observable) {
-  observable.subscribe(function logEvent (schdule) {
-    console.log(schdule.id, schedule.event.date)
+  observable.subscribe(function logEvent (schedule) {
+    console.log(schedule.id, schedule.event.date)
     // best_schedule 2017-07-10T07:26:38.082Z
     // best_schedule 2017-07-10T07:26:39.000Z
     // best_schedule 2017-07-10T07:26:40.000Z
