@@ -7,6 +7,7 @@ var debug = require('debug')('cogsworth:Scheduler')
 
 /**
  * Cogsworth scheduler
+ * @class
  * @param {*} opts
  * @param {Storage} [opts.storage=StorageMemory]
  * @param {Function} [opts.onTick] Scheduler the scheduler calls a function each
@@ -27,11 +28,11 @@ function Scheduler (opts) {
 }
 
 /**
- * Add a schedule to the system
+ * Adds a schedule to the scheduler
+ * @returns {Promise<Schedule>}
  */
 Scheduler.prototype.addSchedule = function (_schedule) {
   var schedule = new Schedule(_schedule)
-  if (!schedule.id) schedule.id = Math.random().toString().substr(2)
   return this.storage.create(schedule)
   .then(function subscribe (schedule) {
     debug('schedule added: ' + schedule.id)
@@ -54,6 +55,10 @@ Scheduler.prototype.addSchedule = function (_schedule) {
   }.bind(this))
 }
 
+/**
+ * Removes a schedule from the scheduler
+ * @returns {Promise<boolean>}
+ */
 Scheduler.prototype.deleteSchedule = function (id) {
   if (!this.subscriptions[id]) throw new Error('no schedule id ' + id)
   this.subscriptions[id].unsubscribe()
@@ -66,19 +71,28 @@ Scheduler.prototype.deleteSchedule = function (id) {
     if (!Object.keys(this.subscriptions).length && this.completeOnEmpty) {
       return this.stop()
     }
+    return true
   }.bind(this))
 }
 
+/**
+ * Gets a schedule from the scheduler
+ * @returns {Promise<Schedule>}
+ */
 Scheduler.prototype.getSchedule = function (id) {
   return this.storage.get(id)
 }
 
+/**
+ * Get schedules from the scheduler
+ * @returns {Promise<Schedule[]>}
+ */
 Scheduler.prototype.getSchedules = function () {
   return this.storage.get()
 }
 
 /**
- * Execute a function against each scheduler schedule
+ * Executes a function against each scheduler schedule
  * @param {Function} fn
  * @returns {Promise}
  */
@@ -88,8 +102,8 @@ Scheduler.prototype.applyToSchedules = function (fn) {
 }
 
 /**
- * Start the scheduler
- * @returns {Promise}
+ * Starts the scheduler
+ * @returns {Promise<Observable>|Promise<Promise>}
  */
 Scheduler.prototype.start = function () {
   this.state = 'STARTING'
@@ -109,8 +123,8 @@ Scheduler.prototype.start = function () {
 }
 
 /**
- * Stop the scheduler
- * @returns {Promise}
+ * Stops the scheduler
+ * @returns {Promise<Scheduler>}
  */
 Scheduler.prototype.stop = function () {
   if (this.state.match(/STOP/)) return Promise.resolve(this)

@@ -20,32 +20,46 @@ module.exports = function toSchedule (ctx) {
   var { trigger, endDate, startDate } = schedule
   validateTrigger(ctx, trigger)
   var { vevent, rrule, cron } = trigger
-  if (rrule || vevent) {
-    if (vevent) {
-      try {
-        rrule = vevent.match(/rrule:\s*([^\s]+)/i)[1].trim()
-      } catch (err) {
-        return ctx.throw(400, 'invalid rrule in vevent')
-      }
-      try {
-        startDate = startDate || new Date(vevent.match(/dtstart:\s*([^\s]+)/i)[1].trim())
-      } catch (err) {
-        // pass
-      }
+
+  // return schedule from vevent
+  if (vevent) {
+    try {
+      rrule = vevent.match(/rrule:\s*([^\s]+)/i)[1].trim()
+    } catch (err) {
+      return ctx.throw(400, 'invalid rrule in vevent')
+    }
+    try {
+      startDate = startDate || new Date(vevent.match(/dtstart:\s*([^\s]+)/i)[1].trim())
+    } catch (err) {
+      // pass
     }
     try {
       schedule.trigger = new TriggerRrule({ rrule, startDate, endDate })
     } catch (err) {
       return ctx.throw(400, 'unable to create RRULE trigger. please inspect your RRULE. failure: ' + err.message)
     }
-  } else if (cron) {
+    return schedule
+  }
+
+  // return schedule from rrule
+  if (rrule) {
+    try {
+      schedule.trigger = new TriggerRrule({ rrule, startDate, endDate })
+    } catch (err) {
+      return ctx.throw(400, 'unable to create RRULE trigger. please inspect your RRULE. failure: ' + err.message)
+    }
+    return schedule
+  }
+
+  // return schedule from cron
+  if (cron) {
     try {
       schedule.trigger = new TriggerCron({ cron, startDate, endDate })
     } catch (err) {
       return ctx.throw(400, 'unable to create cron trigger. please inspect your cron. failure: ' + err.message)
     }
-  } else {
-    return ctx.throw(500, 'no recurrence to build trigger from')
+    return schedule
   }
-  return schedule
+
+  return ctx.throw(500, 'no recurrence to build trigger from')
 }

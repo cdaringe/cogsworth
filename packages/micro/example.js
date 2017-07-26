@@ -3,8 +3,9 @@
 // var producer = new kafka.Producer(client)
 // ...
 // producer.send('schedules', schedule)
-// process.env.DEBUG = '*'
+process.env.DEBUG = '*'
 
+// require('cogsworth-micro').start()
 require('./').start()
 .then(triggerStream => {
   return triggerStream.forEach(({ id, event: { date } }) => {
