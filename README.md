@@ -1,5 +1,7 @@
 # cogsworth
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/cdaringe/cogsworth.svg)](https://greenkeeper.io/)
+
 easy &amp; capable scheduling for node &amp; the browser
 
 [ ![Codeship Status for cdaringe/cogsworth](https://app.codeship.com/projects/e6cd4ce0-4bd1-0135-2de1-02fedcef81c5/status?branch=master)](https://app.codeship.com/projects/232848)
