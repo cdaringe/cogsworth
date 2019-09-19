@@ -32,6 +32,6 @@
   },
   "homepage": "https://github.com/cdaringe/cogsworth#readme",
   "devDependencies": {
-    "perish": "^1.0.1"
+    "perish": "1.0.2"
   }
 }
