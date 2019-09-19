@@ -35,7 +35,7 @@
   },
   "homepage": "https://github.com/cdaringe/cogsworth#readme",
   "devDependencies": {
-    "ava": "0.20.0",
+    "ava": "0.25.0",
     "bluebird": "3.5.5",
     "gh-pages": "1.2.0",
     "lodash": "4.17.15",
