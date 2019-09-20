@@ -33,7 +33,7 @@
     "material-ui": "0.18.7",
     "object-assign": "4.1.1",
     "postcss-flexbugs-fixes": "3.0.0",
-    "postcss-loader": "2.0.6",
+    "postcss-loader": "2.1.6",
     "promise": "7.1.1",
     "react": "15.6.2",
     "react-dev-utils": "^3.0.2",
